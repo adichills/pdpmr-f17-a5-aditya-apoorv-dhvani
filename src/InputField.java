@@ -4,5 +4,6 @@ public class InputField {
     public String day;
     public String origin;
     public String destination;
+
 }
 

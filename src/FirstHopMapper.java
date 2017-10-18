@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +23,8 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
     Set<String> monthList = new HashSet<String>();
     Set<String> originList = new HashSet<String>();
     private static final String CSV_SEP = ",";
-    ArrayList<InputField> inputFieldList = new ArrayList<InputField>();
+
+    HashMap<String,InputField> validRecordFields = new HashMap<String,InputField>();
 
     Configuration conf;
     Text outPutKey = new Text();
@@ -75,24 +77,28 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
 
     }
     private boolean isRecordImportant(String[] record){
-        //check if year is present in the input file
-        if(!yearList.contains(record[0])){
-            return false;
-        }
-        //check if month is present in the input file
-        if(!monthList.contains(record[1])){
-            return false;
-        }
-        //check if the day is present in the input file
-        if(!dayList.contains(record[2])){
-            return false;
-        }
-        //check if the origin is present in the input file
-        if(!originList.contains(record[13])){
-            return false;
-        }
 
-        return true;
+        StringBuilder sb = new StringBuilder();
+        // year
+        sb.append(record[0]);
+        //month
+        sb.append(record[1]);
+        //day
+        sb.append(record[2]);
+        //origin
+        sb.append(record[13]);
+
+        if(validRecordFields.containsKey(sb.toString())){
+           InputField inf =  validRecordFields.get(sb.toString());
+           if(inf.destination.equals(record[22])){
+               return false;
+           }
+           else{
+               return true;
+           }
+        }
+        return false;
+
     }
 
     private void populateInputLists(String filePath) throws IOException{
@@ -116,8 +122,12 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
                 inputField.month = fields[1];
                 inputField.day = fields[2];
                 inputField.origin = fields[3];
-
-                inputFieldList.add(inputField);
+                inputField.destination = fields[4];
+                sb.append(inputField.year);
+                sb.append(inputField.month);
+                sb.append(inputField.day);
+                sb.append(inputField.origin);
+                validRecordFields.put(sb.toString(),inputField);
             }
 
 

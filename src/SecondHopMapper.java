@@ -9,6 +9,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,10 +19,13 @@ public class SecondHopMapper extends Mapper<Object, Text, Text, Text> {
     Set<String> monthList = new HashSet<String>();
     Set<String> destiantionList = new HashSet<String>();
     private static final String CSV_SEP = ",";
-
+    HashMap<String,InputField> validRecordFields = new HashMap<String,InputField>();
     Configuration conf;
     Text outPutKey = new Text();
     Text outPutValue = new Text();
+
+
+
 
     @Override
     protected void setup(Context context) throws IOException {
@@ -36,7 +40,9 @@ public class SecondHopMapper extends Mapper<Object, Text, Text, Text> {
     InterruptedException {
         String[] record = value.toString().split(CSV_SEP);
         if(isRecordImportant(record)){
+
             StringBuilder sb = new StringBuilder();
+
             sb.append("SecondHop");
             sb.append(CSV_SEP);
             sb.append(record[0]);
@@ -70,24 +76,32 @@ public class SecondHopMapper extends Mapper<Object, Text, Text, Text> {
     }
 
     private boolean isRecordImportant(String[] record){
-        //check if year is present in the input file
-        if(!yearList.contains(record[0])){
-            return false;
-        }
-        //check if month is present in the input file
-        if(!monthList.contains(record[1])){
-            return false;
-        }
-        //check if the day is present in the input file
-        if(!dayList.contains(record[2])){
-            return false;
-        }
-        //check if the origin is present in the input file
-        if(!destiantionList.contains(record[22])){
-            return false;
+
+        StringBuilder sb = new StringBuilder();
+        // year
+        sb.append(record[0]);
+        //month
+        sb.append(record[1]);
+        //day
+        sb.append(record[2]);
+        //destination
+        sb.append(record[22]);
+
+        Integer day = Integer.parseInt(record[2]);
+
+        String key = sb.toString();
+        if (validRecordFields.containsKey(key)){
+            if(record[13].equals(validRecordFields.get(key).origin)){
+                return false;
+            }
+            else{
+                return  true;
+            }
         }
 
-        return true;
+        //TODO handle next day flights as well
+
+        return false;
     }
 
     private void populateInputLists(String filePath) throws IOException{
@@ -106,10 +120,17 @@ public class SecondHopMapper extends Mapper<Object, Text, Text, Text> {
             String [] records = fileContents.split("\n");
             for(int i = 0;i< records.length;i++){
                 String [] fields = records[i].split(CSV_SEP);
-                yearList.add(fields[0]);
-                monthList.add(fields[1]);
-                dayList.add(fields[2]);
-                destiantionList.add(fields[4]);
+                InputField inputField = new InputField();
+                inputField.year = fields[0];
+                inputField.month = fields[1];
+                inputField.day = fields[2];
+                inputField.origin = fields[3];
+                inputField.destination = fields[4];
+                sb.append(inputField.year);
+                sb.append(inputField.month);
+                sb.append(inputField.day);
+                sb.append(inputField.destination);
+                validRecordFields.put(sb.toString(),inputField);
             }
 
 
