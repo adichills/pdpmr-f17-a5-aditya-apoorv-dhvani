@@ -5,5 +5,9 @@ public class InputField {
     public String origin;
     public String destination;
 
-}
+    @Override
+    public String toString() {
+        return year + month + day + origin + destination;
+    }
 
+}
