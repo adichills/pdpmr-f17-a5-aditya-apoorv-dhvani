@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -23,6 +22,7 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
     Set<String> monthList = new HashSet<String>();
     Set<String> originList = new HashSet<String>();
     private static final String CSV_SEP = ",";
+    ArrayList<InputField> inputFieldList = new ArrayList<InputField>();
 
     Configuration conf;
     Text outPutKey = new Text();
@@ -111,10 +111,13 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
             String [] records = fileContents.split("\n");
             for(int i = 0;i< records.length;i++){
                 String [] fields = records[i].split(CSV_SEP);
-                yearList.add(fields[0]);
-                monthList.add(fields[1]);
-                dayList.add(fields[2]);
-                originList.add(fields[3]);
+                InputField inputField = new InputField();
+                inputField.year = fields[0];
+                inputField.month = fields[1];
+                inputField.day = fields[2];
+                inputField.origin = fields[3];
+
+                inputFieldList.add(inputField);
             }
 
 
