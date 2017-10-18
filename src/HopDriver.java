@@ -13,7 +13,9 @@ public class HopDriver {
     public static void drive(String input, String output) throws IOException,
             ClassNotFoundException, InterruptedException{
         Configuration conf = new Configuration();
+        conf.set("inputFile","inputFile/inputs");
         Job hop_calculation = Job.getInstance(conf, "Hop Calculation");
+
         hop_calculation.setJarByClass(HopDriver.class);
         //hop_calculation.setInputFormatClass(TextInputFormat.class);
         hop_calculation.setOutputFormatClass(TextOutputFormat.class);
