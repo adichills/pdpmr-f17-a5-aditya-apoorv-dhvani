@@ -216,14 +216,17 @@ public class CleanDataMapper extends Mapper<Object, Text, NullWritable, Text> {
 		51 - CRS_ELAPSED_TIME
 	*/
 	private boolean isNotCancelledTimeZoneValid(CSVRecord record) {
-		int arr = record.get(41).length() > 0 ? convertIntoMinutes(record
-			.get(41)) : 0;
-		int dep = record.get(30).length() > 0 ? convertIntoMinutes(record
-			.get(30)) : 0;
-		int aet = record.get(51).length() > 0 ? Integer
-			.parseInt(record.get(51)) : 0;
-		return isFlightCancelled(record)
-			&& (arr - dep - aet - getTimezone(record)) == 0;
+		if(!isFlightCancelled(record)){
+			int arr = record.get(41).length() > 0 ? convertIntoMinutes(record
+					.get(41)) : 0;
+			int dep = record.get(30).length() > 0 ? convertIntoMinutes(record
+					.get(30)) : 0;
+			int aet = record.get(51).length() > 0 ? Integer
+					.parseInt(record.get(51)) : 0;
+
+			return (arr - dep - aet - getTimezone(record)) == 0;
+		}
+		return true;
 	}
 
 	/*
