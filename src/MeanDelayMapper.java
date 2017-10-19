@@ -8,19 +8,14 @@ import java.util.Set;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 // calculate the normalized delay and output that as value and key as defined in
 // MeanDelayCompositeKey. 
 public class MeanDelayMapper extends Mapper<Object, Text, MeanDelayCompositeKey,
-    DoubleWritable> {
-    int year = 0;
-    Set<Integer> months = new HashSet<>();
-    Set<String> airlines = new HashSet<>();
-    Set<String> origins = new HashSet<>();
-    Set<String> dest = new HashSet<>();
+    Text> {
+    Set<MeanDelayCompositeKey> firstHopFilghts = new HashSet<>();
     
     @Override
     protected void setup(Context context) throws IOException,
@@ -31,53 +26,37 @@ public class MeanDelayMapper extends Mapper<Object, Text, MeanDelayCompositeKey,
             flightListPath)));
         String line;
         line = br.readLine();
-        String record[] = new String[15];
+        String record[] = new String[3];
+        String firstHop[] = new String[8];
         while (line != null) {
-            record = line.split("\\t");
-            if (year == 0) {
-                year = Integer.parseInt(record[0]);
-            }
-            months.add(Integer.parseInt(record[1]));
-            airlines.add(record[5]);
-            origins.add(record[6]);
-            dest.add(record[7]);
+            record = line.split("\\s+");
+            firstHop = record[1].split(",");
+            firstHopFilghts.add(new MeanDelayCompositeKey(
+                Integer.parseInt(firstHop[0]), Integer.parseInt(firstHop[1]), 
+                firstHop[6], firstHop[7], firstHop[5]));
             line = br.readLine();
         }
     }
     
     public void map(Object key, Text value, Context context) throws IOException,
         InterruptedException {
-        double delay = 0;
+        Text delayOrCancelled = new Text();
         MeanDelayCompositeKey k;
         String line[] = value.toString().split(",");
-        if (filterRecord(line)) {
+        k = new MeanDelayCompositeKey(Integer.parseInt(
+            line[0]), Integer.parseInt(line[2]), line[13], line[22], line[6]);
+        if (firstHopFilghts.contains(k)) {
             // line[42] corresponds to cancelled column
             if (line[42].equals("1")) {
-                delay = 4.0;
+                delayOrCancelled.set("*1");
             } else {
-                double arrDelay;
-                double elapsedTime;
                 if (line[38].isEmpty()) {
-                    arrDelay = 0;
+                    delayOrCancelled.set(new Text("0"));
                 } else {
-                    arrDelay = Double.parseDouble(line[38]);
+                    delayOrCancelled.set(new Text(line[38]));
                 }
-                elapsedTime = Double.parseDouble(line[45]);
-                delay = arrDelay / elapsedTime;
             }
-            k = new MeanDelayCompositeKey(Integer.parseInt(
-                line[0]), Integer.parseInt(line[2]), line[13], line[22], line[6]);
-            context.write(k, new DoubleWritable(delay));
         }
-    }
-    
-    private boolean filterRecord(String record[]) {
-        if ((Integer.parseInt(record[0]) < year) && (months.contains(
-            Integer.parseInt(record[2]))) && (airlines.contains(record[6])) &&
-            (origins.contains(record[13])) && (dest.contains(record[22]))) {
-            return true;
-        } else {
-            return false;
-        }
+        context.write(k, delayOrCancelled);
     }
 }
