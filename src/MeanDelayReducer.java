@@ -8,14 +8,15 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 // the reducer has all the normalized delay values per year, month, airport and
 // airline. Calculate the mean and output it.
-public class MeanDelayReducer extends Reducer<MeanDelayCompositeKey, DoubleWritable,
-    Text, DoubleWritable> {
-    public void reduce(MeanDelayCompositeKey key, Iterable<DoubleWritable> values, 
+public class MeanDelayReducer extends Reducer<MeanDelayCompositeKey, Text,
+    Text, Text> {
+    public void reduce(MeanDelayCompositeKey key, Iterable<Text> values, 
         Context context) throws IOException, InterruptedException {
         DoubleWritable mean = new DoubleWritable();
         double sum  = 0;
         int count = 0;
-        for (DoubleWritable val : values) {
+        int cancelled = 0;
+        for (Text val : values) {
             sum += val.get();
             count++;
         }
