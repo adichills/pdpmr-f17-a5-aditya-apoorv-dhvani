@@ -15,7 +15,7 @@ import java.util.HashMap;
 import org.apache.hadoop.mapreduce.Reducer;
 
 public class HopReducer extends Reducer<Text, Text, Text, Text> {
-    private Text joinedResult;
+
     private static final int MINLAYOVERINMINS = 45;
     private static final int MAXLAYOVERINMINS = 720;
     private static final String CSV_SEP = ",";

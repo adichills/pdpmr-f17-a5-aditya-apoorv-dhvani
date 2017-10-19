@@ -49,9 +49,9 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
             sb.append(CSV_SEP);
             sb.append(record[0]);
             sb.append(CSV_SEP);
-            sb.append(record[1]);
-            sb.append(CSV_SEP);
             sb.append(record[2]);
+            sb.append(CSV_SEP);
+            sb.append(record[3]);
             sb.append(CSV_SEP);
             //Dep_Time
             sb.append(record[29]);
@@ -80,9 +80,9 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
             sb.append(CSV_SEP);
             sb.append(record[0]);
             sb.append(CSV_SEP);
-            sb.append(record[1]);
-            sb.append(CSV_SEP);
             sb.append(record[2]);
+            sb.append(CSV_SEP);
+            sb.append(record[3]);
             sb.append(CSV_SEP);
             //Dep_Time
             sb.append(record[29]);
@@ -113,15 +113,15 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
         sb.append(record[0]);
         sb.append(" ");
         //month
-        sb.append(record[1]);
+        sb.append(record[2]);
         sb.append(" ");
         //day
-        sb.append(record[2]);
+        sb.append(record[3]);
         sb.append(" ");
         //origin
         sb.append(record[13]);
-        Integer month = Integer.parseInt(record[1]);
-        Integer day = Integer.parseInt(record[2]);
+        Integer month = Integer.parseInt(record[2]);
+        Integer day = Integer.parseInt(record[3]);
         String key = record[0] + month.toString() + day.toString() + record[13];
         if(validFirstHopFields.containsKey(key)){
            InputField inf =  validFirstHopFields.get(key);
@@ -143,18 +143,18 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
         sb.append(record[0]);
         sb.append(" ");
         //month
-        sb.append(record[1]);
+        sb.append(record[2]);
         sb.append(" ");
         //day
-        sb.append(record[2]);
+        sb.append(record[3]);
         sb.append(" ");
         //destination
         sb.append(record[22]);
 
         //Integer day = Integer.parseInt(record[2]);
 
-        Integer month = Integer.parseInt(record[1]);
-        Integer day = Integer.parseInt(record[2]);
+        Integer month = Integer.parseInt(record[2]);
+        Integer day = Integer.parseInt(record[3]);
         String key = record[0] + month.toString() + day.toString() + record[22];
         if (validSecondHopFields.containsKey(key)){
             if(record[13].equals(validSecondHopFields.get(key).origin)){

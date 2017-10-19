@@ -4,14 +4,16 @@ public class MainDriver {
     public static void main(String []args) throws Exception {
         String inputAfterClean = "cleanedInput";
         String hopsOutput = "hopsOutput";
-        String outActiveAirline = "active airline";
+        String delayCancelOutput = "delayCancelOutput";
         String outTopAirline = "outputAirline";
         String outTopAirport = "outputAirport";
         String outActiveAirport = "active airport";
         //Clean the input data
         CleanDataDriver.drive(args[0],inputAfterClean);
 
-        HopDriver.drive(inputAfterClean,hopsOutput);
+        HopDriver.drive(inputAfterClean,args[1],hopsOutput);
+        DelayCancelDriver.drive(inputAfterClean,args[1],delayCancelOutput);
+
 
     }
 }

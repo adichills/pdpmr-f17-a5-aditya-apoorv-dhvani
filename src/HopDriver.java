@@ -11,7 +11,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import java.io.IOException;
 
 public class HopDriver {
-    public static void drive(String input, String output) throws IOException,
+    public static void drive(String flightData,String input, String output) throws IOException,
             ClassNotFoundException, InterruptedException{
         Configuration conf = new Configuration();
         conf.set("inputFile","inputFile/inputs");
@@ -27,7 +27,7 @@ public class HopDriver {
 
         //MultipleInputs.addInputPath(hop_calculation, new Path(input),TextInputFormat.class, FirstHopMapper.class);
         //MultipleInputs.addInputPath(hop_calculation, new Path("input_sample_2"),TextInputFormat.class, SecondHopMapper.class);
-        FileInputFormat.addInputPath(hop_calculation,new Path(input));
+        FileInputFormat.addInputPath(hop_calculation,new Path(flightData));
         FileOutputFormat.setOutputPath(hop_calculation, new Path(output));
         hop_calculation.waitForCompletion(true);
     }
