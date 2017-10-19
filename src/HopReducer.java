@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.security.spec.ECField;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.hadoop.mapreduce.Reducer;
@@ -59,18 +60,24 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
         String day1 = firstHopValues[3];
         String origin1 = firstHopValues[7];
         String destination1 = firstHopValues[8];
+        String deptime1 = firstHopValues[4];
+        String arrivalTime1 = firstHopValues[5];
+        String airline1 = firstHopValues[6];
 
         String year2 = secondHopValues[1];
         String month2 = secondHopValues[2];
         String day2 = secondHopValues[3];
+        String deptime2 = secondHopValues[4];
+        String airline2 = secondHopValues[5];
         String origin2 = secondHopValues[6];
         String destination2 = secondHopValues[7];
         String check = year1 + month1 + day1 + origin1 + destination2;
 
         String[] result = new String[2];
         result[0] = year1 + CSV_SEP + month1 + CSV_SEP + day1 + CSV_SEP
+                + deptime1 + CSV_SEP + arrivalTime1 + CSV_SEP + airline1 + CSV_SEP
                 + origin1 + CSV_SEP + destination1 + " " + year2 + CSV_SEP
-                + month2 + CSV_SEP + day2 + CSV_SEP + origin2 + CSV_SEP
+                + month2 + CSV_SEP + day2 + CSV_SEP + deptime2 + CSV_SEP + airline2 + CSV_SEP + origin2 + CSV_SEP
                 + destination2;
 
         if ((year1.equals(year2) && month1.equals(month2) && day1.equals(day2) && destination1
@@ -88,11 +95,22 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
 
     public void reduce(Text text, Iterable<Text> values, Context context)
             throws IOException, InterruptedException {
-        for (Text val1 : values) {
-            String[] firstHopValues = val1.toString().split(",");
+
+
+        ArrayList<String> vals1 = new ArrayList<String>();
+        for (Text val : values){
+            vals1.add(val.toString());
+        }
+        ArrayList<String> vals2 = new ArrayList<String>();
+        vals2.addAll(vals1);
+
+
+        for (String val1 : vals1) {
+            String[] firstHopValues = val1.split(",");
+
             if (firstHopValues[0].equals("FirstHop")) {
-                for (Text val2 : values) {
-                    String[] secondHopValues = val2.toString().split(",");
+                for (String val2 : vals2) {
+                    String[] secondHopValues = val2.split(",");
                     if (secondHopValues[0].equals("SecondHop")) {
                         int arrTimeInMins = convertIntoMinutes(firstHopValues[5]);
                         int depTImeInMins = convertIntoMinutes(secondHopValues[4]);
@@ -131,8 +149,10 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
                 String[] fields = records[i].split(CSV_SEP);
                 InputField inputField = new InputField();
                 inputField.year = fields[0];
-                inputField.month = fields[1];
-                inputField.day = fields[2];
+                Integer month = Integer.parseInt(fields[1]);
+                inputField.month = month.toString();
+                Integer day = Integer.parseInt(fields[2]);
+                inputField.day = day.toString();
                 inputField.origin = fields[3];
                 inputField.destination = fields[4];
 

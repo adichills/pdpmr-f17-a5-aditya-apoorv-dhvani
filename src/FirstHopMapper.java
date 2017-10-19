@@ -10,7 +10,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +23,8 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
     Set<String> originList = new HashSet<String>();
     private static final String CSV_SEP = ",";
 
-    HashMap<String,InputField> validRecordFields = new HashMap<String,InputField>();
+    HashMap<String,InputField> validFirstHopFields = new HashMap<String,InputField>();
+    HashMap<String,InputField> validSecondHopFields = new HashMap<String,InputField>();
 
     Configuration conf;
     Text outPutKey = new Text();
@@ -43,7 +43,7 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
             InterruptedException {
         String[] record = value.toString().split(CSV_SEP);
 
-        if(isRecordImportant(record)){
+        if(isRecordFirstHop(record)){
             StringBuilder sb = new StringBuilder();
             sb.append("FirstHop");
             sb.append(CSV_SEP);
@@ -73,23 +73,58 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
             context.write(outPutKey,outPutValue);
 
         }
+        else if(isRecordSecondHop(record)){
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("SecondHop");
+            sb.append(CSV_SEP);
+            sb.append(record[0]);
+            sb.append(CSV_SEP);
+            sb.append(record[1]);
+            sb.append(CSV_SEP);
+            sb.append(record[2]);
+            sb.append(CSV_SEP);
+            //Dep_Time
+            sb.append(record[29]);
+            sb.append(CSV_SEP);
+            //Arr_Time
+            // Airline Carrier
+            sb.append(record[6]);
+            sb.append(CSV_SEP);
+            // Origin
+            sb.append(record[13]);
+            sb.append(CSV_SEP);
+            //Destination
+            sb.append(record[22]);
+            sb.append(CSV_SEP);
+
+
+            outPutKey.set(record[13]);
+            outPutValue.set(sb.toString());
+            context.write(outPutKey,outPutValue);
+        }
 
 
     }
-    private boolean isRecordImportant(String[] record){
+    private boolean isRecordFirstHop(String[] record){
 
         StringBuilder sb = new StringBuilder();
         // year
         sb.append(record[0]);
+        sb.append(" ");
         //month
         sb.append(record[1]);
+        sb.append(" ");
         //day
         sb.append(record[2]);
+        sb.append(" ");
         //origin
         sb.append(record[13]);
-
-        if(validRecordFields.containsKey(sb.toString())){
-           InputField inf =  validRecordFields.get(sb.toString());
+        Integer month = Integer.parseInt(record[1]);
+        Integer day = Integer.parseInt(record[2]);
+        String key = record[0] + month.toString() + day.toString() + record[13];
+        if(validFirstHopFields.containsKey(key)){
+           InputField inf =  validFirstHopFields.get(key);
            if(inf.destination.equals(record[22])){
                return false;
            }
@@ -99,6 +134,40 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
         }
         return false;
 
+    }
+
+    private boolean isRecordSecondHop(String[] record){
+
+        StringBuilder sb = new StringBuilder();
+        // year
+        sb.append(record[0]);
+        sb.append(" ");
+        //month
+        sb.append(record[1]);
+        sb.append(" ");
+        //day
+        sb.append(record[2]);
+        sb.append(" ");
+        //destination
+        sb.append(record[22]);
+
+        //Integer day = Integer.parseInt(record[2]);
+
+        Integer month = Integer.parseInt(record[1]);
+        Integer day = Integer.parseInt(record[2]);
+        String key = record[0] + month.toString() + day.toString() + record[22];
+        if (validSecondHopFields.containsKey(key)){
+            if(record[13].equals(validSecondHopFields.get(key).origin)){
+                return false;
+            }
+            else{
+                return  true;
+            }
+        }
+
+        //TODO handle next day flights as well
+
+        return false;
     }
 
     private void populateInputLists(String filePath) throws IOException{
@@ -119,15 +188,22 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
                 String [] fields = records[i].split(CSV_SEP);
                 InputField inputField = new InputField();
                 inputField.year = fields[0];
-                inputField.month = fields[1];
-                inputField.day = fields[2];
+                Integer month = Integer.parseInt(fields[1]);
+                inputField.month = month.toString();
+                Integer day = Integer.parseInt(fields[2]);
+                inputField.day = day.toString();
                 inputField.origin = fields[3];
                 inputField.destination = fields[4];
                 sb.append(inputField.year);
                 sb.append(inputField.month);
                 sb.append(inputField.day);
                 sb.append(inputField.origin);
-                validRecordFields.put(sb.toString(),inputField);
+                String key1 = fields[0] + month.toString()+ day.toString() + fields[3];
+
+                String key2 = fields[0] + month.toString()+ day.toString() + fields[4];
+
+                validFirstHopFields.put(key1,inputField);
+                validSecondHopFields.put(key2,inputField);
             }
 
 
