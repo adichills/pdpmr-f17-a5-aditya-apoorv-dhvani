@@ -9,15 +9,15 @@ output: html_document
 
 
 ### Problem Statement:
-Given historical airplane on time performance data, you will offer suggestions for two-hop flights that minimize the chance of missing a connection.
+Given historical airplane on time performance data,offer suggestions for two-hop flights that minimize the chance of missing a connection.
 
 ### Implementation
 
 The implementation can be divided into following parts
 
 1.	The first map reduce job fetches all the possible combination of two hop flights based on the input provided. 
-1.1.	The mapper fetches all the flights which have the origin equal to origin in the input but destination not equal to that in input (to filter out direct flights). Similarly, it fetches all the flights which have destination equal to destination in the input but origin not equal to origin in input(to filter out direct flights). This way mapper gets all the two hop flights possible between the origin and destination mentioned in the input.
-1.2.	The reducer then combines all the two hop flights possible between the given origin  and destination in input.
++	The mapper fetches all the flights which have the origin equal to origin in the input but destination not equal to that in input (to filter out direct flights). Similarly, it fetches all the flights which have destination equal to destination in the input but origin not equal to origin in input(to filter out direct flights). This way mapper gets all the two hop flights possible between the origin and destination mentioned in the input.
++	The reducer then combines all the two hop flights possible between the given origin  and destination in input.
 
 2.  
 
@@ -27,7 +27,10 @@ The implementation can be divided into following parts
 
 
 ### Task Distribution
-
+HopMapper and Reducer: Aditya and Apoorv  
+DelayCancelmapper and Reducer: Aditya and Dhvani  
+FilterMapper: Aditya, Apoorv, Dhvani  
+Report: Aditya, Apoorv, Dhvani  
 
 
 ### Configuration of the machines used:
@@ -49,6 +52,55 @@ Processors for all the above machines were 64 bit 2.4 GHz Intel Xeon® E5-2676 v3
 Each vCPU is a hyperthread of an Intel Xeon core.
 
 ### Results
+
+Following was the input we gave to our model:
+
+```
+2001,7,4,JFK,LAX
+2001,7,4,BOS,LAX
+2001,12,5,DEN,ORD
+```
+
+We found out that the total number of two hop flights which were on time was * *3561*.
+We found out this using actual arrival time, actual departure time and cancelled data.
+
+After the first step where we get the two hop flights, by considering only the CRS scheduled time and not the  cancellation time following was the result
+
+| Correct Hops 	| Incorrect Hops 	| Total correct Hops |
+|-------------	|-------------	  |--------------------|
+| 3410         	| 193        	    | 3561               |  
+
+
+```{r echo = FALSE}
+df <- data.frame(Two_Hops= factor(c("Correct Hops", "Incorrect Hops")))
+Number_of_Hops=c(3410, 193)
+
+library(ggplot2)
+plot <- ggplot(data=df, aes(x=Two_Hops, y=Number_of_Hops, fill=Two_Hops)) +
+  geom_bar(stat="identity") +
+  scale_fill_manual(values=c("#66CC88", "#CC6886"))
+print(plot +ggtitle("Hop accuracy after prediction"))
+```
+
+After the second step when we give the above data to our model for prediction and consider delay and cancellation for prediction, following was the result
+
+| Correct Predicted Hops 	| Incorrect Predicted Hops 	| Total correct Hops |
+|-------------	|-------------	  |--------------------|
+| 3263         	| 134        	    | 3561               |  
+
+
+```{r echo = FALSE}
+df <- data.frame(Two_Hops= factor(c("Correct Hops", "Incorrect Hops")))
+Number_of_Hops=c(3263, 134)
+
+library(ggplot2)
+plot <- ggplot(data=df, aes(x=Two_Hops, y=Number_of_Hops, fill=Two_Hops)) +
+  geom_bar(stat="identity") +
+  scale_fill_manual(values=c("#66CC88", "#CC6886"))
+print(plot +ggtitle("Hop accuracy after hop mapper reducer"))
+```
+
+
 
 
 ### Conclusion
