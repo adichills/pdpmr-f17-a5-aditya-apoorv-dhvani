@@ -11,6 +11,8 @@ public class FilterReducer extends Reducer<Text, Text, Text, Text> {
     Configuration conf;
     String mapper;
     private  static final String FIRSTHOP = "FirstHop";
+    private static final int MINLAYOVERINMINS = 45;
+    private static final int MAXLAYOVERINMINS = 720;
 
     Text outputKey = new Text();
     Text outputValue = new Text();
@@ -79,6 +81,14 @@ public class FilterReducer extends Reducer<Text, Text, Text, Text> {
                 int arrTimeInMinutes = convertIntoMinutes(firsthopRecordSplit[4]);
                 int depTimeInMinutes = convertIntoMinutes(secondHopRecordSplit[3]);
 
+                int actualArrTimeInMins = convertIntoMinutes(firsthopRecordSplit[8]);
+                int actualDeptTimeInMins = convertIntoMinutes(secondHopRecordSplit[7]);
+
+                int firstHopCancelled = Integer.parseInt(firsthopRecordSplit[9]);
+                int secondHopCancelled = Integer.parseInt(secondHopRecordSplit[8]);
+
+
+
                 int meanDelayInt = Integer.parseInt(meanDelay);
                 if ((depTimeInMinutes - (arrTimeInMinutes+meanDelayInt))<45){
                     flag = false;
@@ -90,6 +100,20 @@ public class FilterReducer extends Reducer<Text, Text, Text, Text> {
                     }
                 }
                 if(flag){
+
+                    //Counter calculation
+
+                    if(actualDeptTimeInMins -actualArrTimeInMins > MINLAYOVERINMINS &&
+                            actualDeptTimeInMins - actualArrTimeInMins < MAXLAYOVERINMINS
+                            && firstHopCancelled==0
+                            && secondHopCancelled==0){
+                        context.getCounter(CORRECTNESS.CORRECT).increment(1);
+                    }
+                    else{
+                        context.getCounter(CORRECTNESS.INCORRECT).increment(1);
+                    }
+
+
                     outputKey.set(valSplit[1]);
                     outputValue.set(firsthop + " " + secondHop);
                     context.write(outputKey,outputValue);
@@ -100,15 +124,39 @@ public class FilterReducer extends Reducer<Text, Text, Text, Text> {
         else{
             for(String val:vals1){
                 String [] valSplit = val.split("\\s+");
+                String firsthop = valSplit[2];
                 String secondHop = valSplit[3];
-
+                String[] firsthopRecordSplit = firsthop.split(",");
                 String[] secondHopRecordSplit = secondHop.split(",");
+
+                int arrTimeInMinutes = convertIntoMinutes(firsthopRecordSplit[4]);
+                int depTimeInMinutes = convertIntoMinutes(secondHopRecordSplit[3]);
+
+                int actualArrTimeInMins = convertIntoMinutes(firsthopRecordSplit[8]);
+                int actualDeptTimeInMins = convertIntoMinutes(secondHopRecordSplit[7]);
+
+                int firstHopCancelled = Integer.parseInt(firsthopRecordSplit[9]);
+                int secondHopCancelled = Integer.parseInt(secondHopRecordSplit[8]);
+
+
                 boolean flag = true;
                 Double cfDouble = Double.parseDouble(cancelledFraction);
                 if (cfDouble>0.2){
                     flag = false;
                 }
                 if(flag){
+
+                    if(actualDeptTimeInMins -actualArrTimeInMins > MINLAYOVERINMINS &&
+                            actualDeptTimeInMins - actualArrTimeInMins < MAXLAYOVERINMINS
+                            && firstHopCancelled==0
+                            && secondHopCancelled==0){
+                        context.getCounter(CORRECTNESS.CORRECT).increment(1);
+                    }
+                    else{
+                        context.getCounter(CORRECTNESS.INCORRECT).increment(1);
+                    }
+
+
                     outputKey.set(valSplit[1]);
                     outputValue.set(valSplit[2] + " " + secondHop);
                     context.write(outputKey,outputValue);

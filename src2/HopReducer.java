@@ -20,11 +20,15 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
     private static final String CSV_SEP = ",";
     private HashMap<String, InputField> validRecordFields = new HashMap<String, InputField>();
     Configuration conf;
+    String mode = "";
+    private static final String MODE1 = "actual";
+    private static final String MODE2 = "crs";
 
     @Override
     protected void setup(Context context) throws IOException {
         conf = context.getConfiguration();
         String inputfilePath = conf.get("inputFile");
+        mode = conf.get("mode");
         populateInputLists(inputfilePath);
     }
 
@@ -58,6 +62,8 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
         String deptime1 = firstHopValues[4];
         String arrivalTime1 = firstHopValues[5];
         String airline1 = firstHopValues[6];
+        String actualArrivalTime1 = firstHopValues[9];
+        String cancelled1 = firstHopValues[10];
 
         String year2 = secondHopValues[1];
         String month2 = secondHopValues[2];
@@ -66,14 +72,19 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
         String airline2 = secondHopValues[5];
         String origin2 = secondHopValues[6];
         String destination2 = secondHopValues[7];
+        String actulDepatureTime2 = secondHopValues[8];
+        String cancelled2 = secondHopValues[9];
         String check = year1 + month1 + day1 + origin1 + destination2;
 
         String[] result = new String[2];
         result[0] = year1 + CSV_SEP + month1 + CSV_SEP + day1 + CSV_SEP
             + deptime1 + CSV_SEP + arrivalTime1 + CSV_SEP + airline1 + CSV_SEP
-            + origin1 + CSV_SEP + destination1 + " " + year2 + CSV_SEP
+            + origin1 + CSV_SEP + destination1 +CSV_SEP + actualArrivalTime1 +CSV_SEP
+                +cancelled1+ " " + year2 + CSV_SEP
             + month2 + CSV_SEP + day2 + CSV_SEP + deptime2 + CSV_SEP + airline2 
-            + CSV_SEP + origin2 + CSV_SEP + destination2;
+            + CSV_SEP + origin2 + CSV_SEP + destination2 + CSV_SEP + actulDepatureTime2 + CSV_SEP + cancelled2;
+
+
 
         if ((year1.equals(year2) && month1.equals(month2) && day1.equals(day2) && destination1
                 .equals(origin2))
@@ -83,6 +94,8 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
                 + validRecordFields.get(check).day + CSV_SEP
                 + validRecordFields.get(check).origin + CSV_SEP
                 + validRecordFields.get(check).destination;
+
+
             return result;
         } else
             return null;
@@ -106,11 +119,47 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
                     if (secondHopValues[0].equals("SecondHop")) {
                         int arrTimeInMins = convertIntoMinutes(firstHopValues[5]);
                         int depTImeInMins = convertIntoMinutes(secondHopValues[4]);
-                        if (depTImeInMins - arrTimeInMins > MINLAYOVERINMINS
-                                && depTImeInMins - arrTimeInMins < MAXLAYOVERINMINS) {
+
+                        int actualArrTimeInMins = convertIntoMinutes(firstHopValues[9]);
+                        int actualDeptTimeInMins = convertIntoMinutes(secondHopValues[8]);
+
+                        int firstHopCancelled = Integer.parseInt(firstHopValues[10]);
+                        int secondHopCancelled = Integer.parseInt(secondHopValues[9]);
+
+                        int deptTimeToConsider = 0;
+                        int arrTimeToConsider = 0;
+
+                        if(mode.equals(MODE2)){
+                            deptTimeToConsider = depTImeInMins;
+                            arrTimeToConsider = arrTimeInMins;
+                        }
+                        else{
+                            deptTimeToConsider = actualDeptTimeInMins;
+                            arrTimeToConsider = actualArrTimeInMins;
+                        }
+
+
+
+                        if (deptTimeToConsider - arrTimeToConsider > MINLAYOVERINMINS
+                                && deptTimeToConsider - arrTimeToConsider < MAXLAYOVERINMINS) {
                             String[] result = getFlightResult(firstHopValues,
                                 secondHopValues);
                             if (null != result) {
+
+                                //Counter calculation
+
+                                if(actualDeptTimeInMins -actualArrTimeInMins > MINLAYOVERINMINS &&
+                                        actualDeptTimeInMins - actualArrTimeInMins < MAXLAYOVERINMINS
+                                        && firstHopCancelled==0
+                                        && secondHopCancelled==0){
+                                    context.getCounter(CORRECTNESS.CORRECT).increment(1);
+                                }
+                                else{
+                                    context.getCounter(CORRECTNESS.INCORRECT).increment(1);
+                                }
+
+                                //
+
                                 context.write(new Text(result[1]), new Text(
                                     result[0]));
                             }

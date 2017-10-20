@@ -2,6 +2,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
@@ -34,6 +36,14 @@ public class FilterDriver {
 
         FileOutputFormat.setOutputPath(job, new Path(output));
         job.waitForCompletion(true);
+
+
+        Counters counters = job.getCounters();
+        Counter correct = counters.findCounter(CORRECTNESS.CORRECT);
+        System.out.println(correct.getDisplayName() + " " + correct.getValue());
+
+        Counter incorrect = counters.findCounter(CORRECTNESS.INCORRECT);
+        System.out.println(incorrect.getDisplayName() + " " + incorrect.getValue());
 
     }
 }

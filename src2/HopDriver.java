@@ -2,6 +2,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counter;
+import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
@@ -12,10 +14,11 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import java.io.IOException;
 
 public class HopDriver {
-    public static void drive(String flightData,String input, String output) throws IOException,
+    public static void drive(String flightData,String mode,String input, String output) throws IOException,
             ClassNotFoundException, InterruptedException{
         Configuration conf = new Configuration();
         conf.set("inputFile","inputFile/inputs");
+        conf.set("mode",mode);
         Job hop_calculation = Job.getInstance(conf, "Hop Calculation");
 
         hop_calculation.setJarByClass(HopDriver.class);
@@ -34,5 +37,13 @@ public class HopDriver {
         FileInputFormat.addInputPath(hop_calculation,new Path(flightData));
         FileOutputFormat.setOutputPath(hop_calculation, new Path(output));
         hop_calculation.waitForCompletion(true);
+
+        //get counters
+        Counters counters = hop_calculation.getCounters();
+        Counter correct = counters.findCounter(CORRECTNESS.CORRECT);
+        System.out.println(correct.getDisplayName() + " " + correct.getValue());
+
+        Counter incorrect = counters.findCounter(CORRECTNESS.INCORRECT);
+        System.out.println(incorrect.getDisplayName() + " " + incorrect.getValue());
     }
 }

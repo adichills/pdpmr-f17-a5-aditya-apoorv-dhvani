@@ -10,15 +10,15 @@ public class MainDriver {
         String outActiveAirport = "active airport";
 
         String filterFirstHopOutput = "firstHopOutput";
-        //Clean the input data
-        CleanDataDriver.drive(args[0],inputAfterClean);
 
-        HopDriver.drive(inputAfterClean,args[1],hopsOutput);
-        DelayCancelDriver.drive(inputAfterClean,args[1],delayCancelOutput);
+        HopDriver.drive(args[0],"crs",args[1],hopsOutput);
+        DelayCancelDriver.drive(args[0],args[1],delayCancelOutput);
 
 
         FilterDriver.drive("FirstHop",hopsOutput,delayCancelOutput,filterFirstHopOutput);
         FilterDriver.drive("SecondHop",filterFirstHopOutput,delayCancelOutput,"output");
+
+        HopDriver.drive(args[0],"actual",args[1],"output2");
 
     }
 }

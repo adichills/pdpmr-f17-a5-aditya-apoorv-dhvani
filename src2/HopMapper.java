@@ -100,7 +100,7 @@ public class HopMapper extends Mapper<Object, Text, Text, Text> {
                 sb.append(record.get(14));
                 sb.append(CSV_SEP);
                 //Destination
-                sb.append(record.get(29));
+                sb.append(record.get(23));
                 sb.append(CSV_SEP);
                 // Actual Departure
                 sb.append(record.get(30));
