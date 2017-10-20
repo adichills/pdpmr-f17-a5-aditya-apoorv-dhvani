@@ -1,11 +1,13 @@
+// @Author : Apoorv Anand, Aditya Kammardi Sathyanarayan, Dhvani Sheth
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
 
+// get the delay and cancellation per month, airline, origin and destination
 public class DelayCancelMapper extends Mapper<Object, Text, Text, Text> {
-
     Configuration conf;
     String inputYear;
     private static final String CSV_SEP = ",";
@@ -14,39 +16,32 @@ public class DelayCancelMapper extends Mapper<Object, Text, Text, Text> {
 
     protected void setup(Context context) throws IOException {
         conf = context.getConfiguration();
-
         inputYear = conf.get("inputYear");
-
-
-
     }
 
     public void map(Object key, Text value, Context context) throws IOException,
-            InterruptedException {
-        String[] record = value.toString().split(CSV_SEP);
-
-        if (record[0].compareTo(inputYear)<0){
-               StringBuilder sb = new StringBuilder();
-               sb.append(record[2]);
-               sb.append(CSV_SEP);
-               sb.append(record[6]);
-               sb.append(CSV_SEP);
-               sb.append(record[13]);
-               sb.append(CSV_SEP);
-               sb.append(record[22]);
-               outputKey.set(sb.toString());
-
-               String output = (record[42].equals("1"))? record[38] + CSV_SEP + "1": record[38] + CSV_SEP + "0";
-
-               outputValue.set(output);
-               context.write(outputKey,outputValue);
+        InterruptedException {
+        CSVRecord record = new CSVRecord(value.toString());
+        if (CommonUtil.cleanData(record)) {
+            // check whether the record is of year previous than the input year.
+            // for every month, airline, origin and destination as the key, output
+            // the delay at the destination and concatenate whether the flight 
+            // was cancelled or not
+            if (record.get(0).compareTo(inputYear) < 0) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(record.get(2));
+                sb.append(CSV_SEP);
+                sb.append(record.get(6).replaceAll("\\s+", ""));
+                sb.append(CSV_SEP);
+                sb.append(record.get(14));
+                sb.append(CSV_SEP);
+                sb.append(record.get(23));
+                outputKey.set(sb.toString());
+                String output = (record.get(47).equals("1"))? record.get(43) + 
+                    CSV_SEP + "1": record.get(43) + CSV_SEP + "0";
+                outputValue.set(output);
+                context.write(outputKey, outputValue);
+            }
         }
-
-
-
     }
-
-
-
-
-    }
+}

@@ -75,7 +75,7 @@ public class CSVRecord implements Iterable<String> {
 		return line.substring(starts[i], ends[i]);
 	}
 
-	@Override
+
 	public Iterator<String> iterator() {
 		return new Iter();
 	}
@@ -88,17 +88,16 @@ public class CSVRecord implements Iterable<String> {
 	class Iter implements Iterator<String> {
 		int i;
 
-		@Override
+
 		public boolean hasNext() {
 			return i < fieldCount;
 		}
 
-		@Override
 		public String next() {
 			return get(i++);
 		}
 
-		@Override
+
 		public void remove() {
 			// TODO Auto-generated method stub
 			
