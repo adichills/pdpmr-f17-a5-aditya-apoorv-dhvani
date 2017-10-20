@@ -161,12 +161,38 @@ Report: Aditya, Apoorv, Dhvani</p>
 </div>
 <div id="configuration-of-the-machines-used" class="section level3">
 <h3>Configuration of the machines used</h3>
-<p>The program was run on AWS EMR with one namenode and four datanodes on the whole dataset. Below is the configuration of the machines used: Namenode: vCPU: 8 RAM: 16GB Hard Disk: 100GB Datanodes: vCPU: 16 RAM: 32GB Hard Disk: 100GB</p>
+<p>The program was intially run on AWS EMR with one namenode and four datanodes on the whole dataset. Later on we increased the number of datanodes to 8 to get a better runtime.</p>
+<p>Below is the configuration of the machines used:<br />
+Namenode:<br />
+vCPU: 8 RAM: 16GB Hard Disk: 70GB<br />
+Datanodes:<br />
+vCPU: 8 RAM: 16GB Hard Disk: 70GB</p>
 <p>Processors for all the above machines were 64 bit 2.4 GHz Intel Xeon® E5-2676 v3 (Haswell) processors. Each vCPU is a hyperthread of an Intel Xeon core.</p>
 </div>
 <div id="performance" class="section level3">
 <h3>Performance</h3>
-<p>The program ran on the EMR configuration mentioned above, within 29 minutes</p>
+<p>Following is the perfromance we got on AWS EMR configurations mentioned above.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Name Nodes</th>
+<th>Data Nodes</th>
+<th>Runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>4</td>
+<td>29 minutes</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>8</td>
+<td>15 minutes</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="results" class="section level3">
 <h3>Results</h3>

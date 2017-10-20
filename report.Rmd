@@ -37,18 +37,27 @@ Report: Aditya, Apoorv, Dhvani
 
 ### Configuration of the machines used
 
-The program was run on AWS EMR with one namenode and four datanodes on the whole dataset. Below is the configuration of the machines used:
-Namenode: 
-vCPU: 8   RAM: 16GB   Hard Disk: 100GB
-Datanodes: 
-vCPU: 16  RAM: 32GB   Hard Disk: 100GB
+The program was intially run on AWS EMR with one namenode and four datanodes on the whole dataset. 
+Later on we increased the number of datanodes to 8 to get a better runtime.
+
+Below is the configuration of the machines used:  
+Namenode:   
+vCPU: 8   RAM: 16GB   Hard Disk: 70GB  
+Datanodes:   
+vCPU: 8  RAM:  16GB   Hard Disk: 70GB  
 
 Processors for all the above machines were 64 bit 2.4 GHz Intel Xeon® E5-2676 v3 (Haswell) processors. 
 Each vCPU is a hyperthread of an Intel Xeon core.
 
 ### Performance  
 
-The program ran on the EMR configuration mentioned above, within 29 minutes
+Following is the perfromance we got on AWS EMR configurations mentioned above.
+
+|Name Nodes | Data Nodes | Runtime|
+|-----------|------------|--------|
+|1          | 4          | 29 minutes|
+|1          | 8          | 15 minutes|
+
 
 ### Results
 
