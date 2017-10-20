@@ -1,4 +1,5 @@
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -23,6 +24,9 @@ public class HopDriver {
         hop_calculation.setOutputValueClass(Text.class);
         hop_calculation.setMapperClass(FirstHopMapper.class);
         hop_calculation.setInputFormatClass(TextInputFormat.class);
+
+        FileSystem fs = FileSystem.get(new Configuration());
+        fs.delete(new Path(output), true);
         //hop_calculation.setNumReduceTasks(0);
 
         //MultipleInputs.addInputPath(hop_calculation, new Path(input),TextInputFormat.class, FirstHopMapper.class);

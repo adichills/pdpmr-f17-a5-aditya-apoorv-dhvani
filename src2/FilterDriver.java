@@ -1,4 +1,5 @@
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -24,6 +25,9 @@ public class FilterDriver {
         job.setOutputValueClass(Text.class);
         //job.setMapperClass(DelayCancelMapper.class);
         //job.setInputFormatClass(TextInputFormat.class);
+
+        FileSystem fs = FileSystem.get(new Configuration());
+        fs.delete(new Path(output), true);
 
         MultipleInputs.addInputPath(job,new Path(hopInput),TextInputFormat.class,FilterMapper1.class);
         MultipleInputs.addInputPath(job,new Path(meanDelayAndCancelledInput),TextInputFormat.class,FilterMapper2.class);

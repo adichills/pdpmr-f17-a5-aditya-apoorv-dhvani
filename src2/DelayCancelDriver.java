@@ -33,6 +33,9 @@ public class DelayCancelDriver {
         job.setMapperClass(DelayCancelMapper.class);
         job.setInputFormatClass(TextInputFormat.class);
 
+        FileSystem fs = FileSystem.get(new Configuration());
+        fs.delete(new Path(output), true);
+
         FileInputFormat.addInputPath(job,new Path(flightData));
         FileOutputFormat.setOutputPath(job, new Path(output));
         job.waitForCompletion(true);

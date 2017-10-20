@@ -99,6 +99,8 @@ public class FirstHopMapper extends Mapper<Object, Text, Text, Text> {
             sb.append(CSV_SEP);
 
 
+
+
             outPutKey.set(record[13]);
             outPutValue.set(sb.toString());
             context.write(outPutKey,outPutValue);
