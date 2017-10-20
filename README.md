@@ -29,7 +29,7 @@ If you are not familiar with this, please follow the steps in the pdf attached.
 
 Format of the input query (in a file):
 
-2001,7,4,JFK,LAX
-2001,7,4,BOS,LAX
-2001,12,5,DEN,ORD
+####2001,7,4,JFK,LAX
+####2001,7,4,BOS,LAX
+####2001,12,5,DEN,ORD
 
