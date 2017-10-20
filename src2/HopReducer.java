@@ -24,11 +24,8 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
     @Override
     protected void setup(Context context) throws IOException {
         conf = context.getConfiguration();
-
         String inputfilePath = conf.get("inputFile");
-
         populateInputLists(inputfilePath);
-
     }
 
     private int convertIntoMinutes(String time) {
@@ -52,8 +49,7 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
         }
     }
 
-    public String[] getFlightResult(String[] firstHopValues,
-            String[] secondHopValues) {
+    public String[] getFlightResult(String[] firstHopValues, String[] secondHopValues) {
         String year1 = firstHopValues[1];
         String month1 = firstHopValues[2];
         String day1 = firstHopValues[3];
@@ -74,19 +70,19 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
 
         String[] result = new String[2];
         result[0] = year1 + CSV_SEP + month1 + CSV_SEP + day1 + CSV_SEP
-                + deptime1 + CSV_SEP + arrivalTime1 + CSV_SEP + airline1 + CSV_SEP
-                + origin1 + CSV_SEP + destination1 + " " + year2 + CSV_SEP
-                + month2 + CSV_SEP + day2 + CSV_SEP + deptime2 + CSV_SEP + airline2 + CSV_SEP + origin2 + CSV_SEP
-                + destination2;
+            + deptime1 + CSV_SEP + arrivalTime1 + CSV_SEP + airline1 + CSV_SEP
+            + origin1 + CSV_SEP + destination1 + " " + year2 + CSV_SEP
+            + month2 + CSV_SEP + day2 + CSV_SEP + deptime2 + CSV_SEP + airline2 
+            + CSV_SEP + origin2 + CSV_SEP + destination2;
 
         if ((year1.equals(year2) && month1.equals(month2) && day1.equals(day2) && destination1
                 .equals(origin2))
                 && (validRecordFields.containsKey(check))) {
             result[1] = validRecordFields.get(check).year + CSV_SEP
-                    + validRecordFields.get(check).month + CSV_SEP
-                    + validRecordFields.get(check).day + CSV_SEP
-                    + validRecordFields.get(check).origin + CSV_SEP
-                    + validRecordFields.get(check).destination;
+                + validRecordFields.get(check).month + CSV_SEP
+                + validRecordFields.get(check).day + CSV_SEP
+                + validRecordFields.get(check).origin + CSV_SEP
+                + validRecordFields.get(check).destination;
             return result;
         } else
             return null;
@@ -102,11 +98,8 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
         }
         ArrayList<String> vals2 = new ArrayList<String>();
         vals2.addAll(vals1);
-
-
         for (String val1 : vals1) {
             String[] firstHopValues = val1.split(",");
-
             if (firstHopValues[0].equals("FirstHop")) {
                 for (String val2 : vals2) {
                     String[] secondHopValues = val2.split(",");
@@ -116,18 +109,16 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
                         if (depTImeInMins - arrTimeInMins > MINLAYOVERINMINS
                                 && depTImeInMins - arrTimeInMins < MAXLAYOVERINMINS) {
                             String[] result = getFlightResult(firstHopValues,
-                                    secondHopValues);
+                                secondHopValues);
                             if (null != result) {
                                 context.write(new Text(result[1]), new Text(
-                                        result[0]));
+                                    result[0]));
                             }
                         }
                     }
                 }
             }
-
         }
-
     }
 
     private void populateInputLists(String filePath) throws IOException {
@@ -137,10 +128,8 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
         FSDataInputStream in = null;
         StringBuilder sb = new StringBuilder();
         try {
-
             in = fs.open(new Path(uri));
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
             IOUtils.copyBytes(in, byteArrayOutputStream, 4096, false);
             String fileContents = byteArrayOutputStream.toString();
             String[] records = fileContents.split("\n");
@@ -161,6 +150,5 @@ public class HopReducer extends Reducer<Text, Text, Text, Text> {
         } finally {
             IOUtils.closeStream(in);
         }
-
     }
 }

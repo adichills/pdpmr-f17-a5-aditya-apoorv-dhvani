@@ -22,7 +22,7 @@ public class HopDriver {
         hop_calculation.setReducerClass(HopReducer.class);
         hop_calculation.setOutputKeyClass(Text.class);
         hop_calculation.setOutputValueClass(Text.class);
-        hop_calculation.setMapperClass(FirstHopMapper.class);
+        hop_calculation.setMapperClass(HopMapper.class);
         hop_calculation.setInputFormatClass(TextInputFormat.class);
 
         FileSystem fs = FileSystem.get(new Configuration());
