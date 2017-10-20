@@ -17,7 +17,7 @@ public class CleanDataMapper extends Mapper<Object, Text, NullWritable, Text> {
     public void map(Object key, Text value, Context context)
 		throws IOException, InterruptedException {
 		CSVRecord record = new CSVRecord(value.toString());
-		if (isRecordValid(record)) {
+		if (isRecordValid(record) && record.fieldCount == 110) {
 			StringBuilder sb = appendRelevantData(record);
 			context.write(NullWritable.get(), new Text(sb.toString()));
 		}
