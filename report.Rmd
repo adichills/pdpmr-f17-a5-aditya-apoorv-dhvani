@@ -64,10 +64,11 @@ Each vCPU is a hyperthread of an Intel Xeon core.
 
 Following is the perfromance we got on AWS EMR configurations mentioned above.
 
-|Name Nodes | Data Nodes | Runtime|
-|-----------|------------|--------|
-|1          | 4          | 29 minutes|
-|1          | 8          | 16 minutes|
+|Iteration|Name Nodes | Data Nodes | Runtime|
+|-----------|-----------|------------|--------|
+|1|1          | 4          | 29 minutes|
+|2|1          | 8          | 16 minutes|
+|3|1          | 8          | 16 minutes|
 
 
 ### Results
@@ -82,14 +83,14 @@ Following was the input we gave to our model:
 2001,12,5,DEN,ORD
 ```
 
-We found out that the total number of two hop flights which were on time was ** 3561 **.
+We found out that the total number of two hop flights which were on time was **3561**.
 We found out this using actual arrival time, actual departure time and cancelled data while calculating the two hops.
 
 After the first step where we get the two hop flights, by considering only the CRS scheduled time and not the  cancellation time following was the result :-
 
-| Correct Hops 	| Incorrect Hops 	| Total correct Hops |
-|-------------	|-------------	  |--------------------|
-| 3410         	| 193        	    | 3561               |  
+| Correct Hops 	| Incorrect Hops 	|
+|-------------	|-------------	  |
+| 3410         	| 193        	    | 
 
 _correct hops : the two hop connection, where both the flights were on time_  
 _incorrect hops : the two hop connection, where either of the flights were not on time or cancelled_
@@ -105,14 +106,20 @@ plot <- ggplot(data=df, aes(x=Two_Hops, y=Number_of_Hops, fill=Two_Hops)) +
 print(plot +ggtitle("Hop accuracy hop map reducer"))
 ```
 
-After the second step when we give the above data to our model for prediction and consider delay and cancellation for prediction, following was the result
+After the fourth step when we give the above data to our model for prediction and consider delay and cancellation for prediction, following was the result
 
-| Correct Predicted Hops 	| Incorrect Predicted Hops 	| Total correct Hops |
-|-------------	|-------------	  |--------------------|
-| 3263         	| 134        	    | 3561               |  
+| Correct Predicted Hops 	| Incorrect Predicted Hops 	|
+|-------------	|-------------	  |
+| 3263         	| 134        	    |
 
 _correct hops : the two hop connection, where both the flights were on time_  
 _incorrect hops : the two hop connection, where either of the flights were not on time or cancelled_
+
+|Total correct Hops |
+|-------------------|
+|3561               |
+
+_total correct hops: the total number of two hop connections which were on time_
 
 ```{r echo = FALSE}
 df <- data.frame(Two_Hops= factor(c("Correct Hops", "Incorrect Hops")))
@@ -154,14 +161,14 @@ Following was the input we gave to our model:
 2014,6,7,TUS,SIT
 ```
 
-We found out that the total number of two hop flights which were on time was ** 3746 **.
+We found out that the total number of two hop flights which were on time was **3746**.
 We found out this using actual arrival time, actual departure time and cancelled data while calculating the two hops.
 
 After the first step where we get the two hop flights, by considering only the CRS scheduled time and not the  cancellation time following was the result :-
 
-| Correct Hops 	| Incorrect Hops 	| Total correct Hops |
-|-------------	|-------------	  |--------------------|
-| 3463         	| 194        	    | 3746               |  
+| Correct Hops 	| Incorrect Hops 	| 
+|-------------	|-------------	  |
+| 3463         	| 194        	    |  
 
 _correct hops : the two hop connection, where both the flights were on time_  
 _incorrect hops : the two hop connection, where either of the flights were not on time or cancelled_
@@ -177,14 +184,21 @@ plot <- ggplot(data=df, aes(x=Two_Hops, y=Number_of_Hops, fill=Two_Hops)) +
 print(plot +ggtitle("Hop accuracy hop map reducer"))
 ```
 
-After the second step when we give the above data to our model for prediction and consider delay and cancellation for prediction, following was the result
+After the fourth step when we give the above data to our model for prediction and consider delay and cancellation for prediction, following was the result
 
-| Correct Predicted Hops 	| Incorrect Predicted Hops 	| Total correct Hops |
-|-------------	|-------------	  |--------------------|
-| 3314         	| 141        	    | 3746               |  
+| Correct Predicted Hops 	| Incorrect Predicted Hops 	|
+|-------------	|-------------	  |
+| 3314         	| 141        	    |
 
 _correct hops : the two hop connection, where both the flights were on time_  
 _incorrect hops : the two hop connection, where either of the flights were not on time or cancelled_
+
+
+|Total correct Hops |
+|-------------------|
+|3746               |
+
+_total correct hops: the total number of two hop connections which were on time_
 
 ```{r echo = FALSE}
 df <- data.frame(Two_Hops= factor(c("Correct Hops", "Incorrect Hops")))
@@ -222,14 +236,14 @@ Following was the input we gave to our model:
 2009,6,7,TUS,SIT
 ```
 
-We found out that the total number of two hop flights which were on time was ** 3618 **.
+We found out that the total number of two hop flights which were on time was **3618**.
 We found out this using actual arrival time, actual departure time and cancelled data while calculating the two hops.
 
 After the first step where we get the two hop flights, by considering only the CRS scheduled time and not the  cancellation time following was the result :-
 
-| Correct Hops 	| Incorrect Hops 	| Total correct Hops |
-|-------------	|-------------	  |--------------------|
-| 3354         	| 179        	    | 3618               |  
+| Correct Hops 	| Incorrect Hops 	| 
+|-------------	|-------------	  |
+| 3354         	| 179        	    | 
 
 _correct hops : the two hop connection, where both the flights were on time_  
 _incorrect hops : the two hop connection, where either of the flights were not on time or cancelled_
@@ -245,14 +259,20 @@ plot <- ggplot(data=df, aes(x=Two_Hops, y=Number_of_Hops, fill=Two_Hops)) +
 print(plot +ggtitle("Hop accuracy hop map reducer"))
 ```
 
-After the second step when we give the above data to our model for prediction and consider delay and cancellation for prediction, following was the result
+After the fourth step when we give the above data to our model for prediction and consider delay and cancellation for prediction, following was the result
 
-| Correct Predicted Hops 	| Incorrect Predicted Hops 	| Total correct Hops |
-|-------------	|-------------	  |--------------------|
-| 3228         	| 97        	    | 3618               |  
+| Correct Predicted Hops 	| Incorrect Predicted Hops 	|
+|-------------	|-------------	  |
+| 3228         	| 97        	    |  
 
 _correct hops : the two hop connection, where both the flights were on time_  
 _incorrect hops : the two hop connection, where either of the flights were not on time or cancelled_
+
+|Total correct Hops |
+|-------------------|
+|3618               |
+
+_total correct hops: the total number of two hop connections which were on time_
 
 ```{r echo = FALSE}
 df <- data.frame(Two_Hops= factor(c("Correct Hops", "Incorrect Hops")))
