@@ -1,0 +1,54 @@
+---
+title: "A5 - On-time performance: Model and Join"
+author: "Aditya, Apoorv, Dhvani"
+date: "October 19, 2017"
+output: html_document
+---
+### Implementation high level view
+![](workflow.png)
+
+
+### Problem Statement:
+Given historical airplane on time performance data, you will offer suggestions for two-hop flights that minimize the chance of missing a connection.
+
+### Implementation
+
+The implementation can be divided into following parts
+
+1.	The first map reduce job fetches all the possible combination of two hop flights based on the input provided. 
+1.1.	The mapper fetches all the flights which have the origin equal to origin in the input but destination not equal to that in input (to filter out direct flights). Similarly, it fetches all the flights which have destination equal to destination in the input but origin not equal to origin in input(to filter out direct flights). This way mapper gets all the two hop flights possible between the origin and destination mentioned in the input.
+1.2.	The reducer then combines all the two hop flights possible between the given origin  and destination in input.
+
+2.  
+
+3. 
+
+4.
+
+
+### Task Distribution
+
+
+
+### Configuration of the machines used:
+
+The program was run on AWS EMR with one namenode and four datanodes on the whole dataset. Running time was 20 minutes. Below is the configuration of the machines used:
+Namenode: 
+vCPU: 8   RAM: 16GB   Hard Disk: 100GB
+Datanodes: 
+vCPU: 16  RAM: 32GB   Hard Disk: 100GB
+
+
+The program was run on AWS EC2 cluster with one namenode and four datanodes on the whole dataset. Running time was 20 minutes. Below is the configuration of the machines used:
+Namenode and Datanodes: 
+vCPU: 16 
+RAM: 32GB 
+Hard Disk: 50GB
+
+Processors for all the above machines were 64 bit 2.4 GHz Intel Xeon® E5-2676 v3 (Haswell) processors. 
+Each vCPU is a hyperthread of an Intel Xeon core.
+
+### Results
+
+
+### Conclusion
