@@ -12,9 +12,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HopDriver {
-    public static void drive(String flightData,String mode,String input, String output) throws IOException,
+    public static List<String> drive(String flightData, String mode, String input, String output) throws IOException,
             ClassNotFoundException, InterruptedException{
         Configuration conf = new Configuration();
         conf.set("inputFile","inputFile/inputs");
@@ -45,5 +47,9 @@ public class HopDriver {
 
         Counter incorrect = counters.findCounter(CORRECTNESS.INCORRECT);
         System.out.println(incorrect.getDisplayName() + " " + incorrect.getValue());
+        List<String> list = new ArrayList<String>();
+        list.add(String.valueOf(correct.getValue()));
+        list.add(String.valueOf(incorrect.getValue()));
+        return list;
     }
 }

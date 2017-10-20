@@ -11,9 +11,11 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilterDriver {
-    public static void drive(String filterType,String hopInput,String meanDelayAndCancelledInput,String output) throws IOException,
+    public static List<String> drive(String filterType, String hopInput, String meanDelayAndCancelledInput, String output) throws IOException,
             ClassNotFoundException, InterruptedException{
 
         Configuration conf = new Configuration();
@@ -44,6 +46,11 @@ public class FilterDriver {
 
         Counter incorrect = counters.findCounter(CORRECTNESS.INCORRECT);
         System.out.println(incorrect.getDisplayName() + " " + incorrect.getValue());
+
+        List<String> list = new ArrayList<String>();
+        list.add(String.valueOf(correct.getValue()));
+        list.add(String.valueOf(incorrect.getValue()));
+        return list;
 
     }
 }

@@ -1,10 +1,15 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 
 public class CommonUtil {
-    
-    protected static boolean cleanData(CSVRecord record) {      
+
+    private static String COMMA_SEPARATOR = ",";
+
+    protected static boolean cleanData(CSVRecord record) {
         return isRecordValid(record) && (record.fieldCount == 110);
     }
-    
+
     private static boolean isRecordValid(CSVRecord record) {
         return isCRSTimeValid(record) && isTimeZoneValid(record)
             && isAirportIdValid(record) && isAirportSeqIdValid(record)
@@ -16,7 +21,7 @@ public class CommonUtil {
             && isNotCancelledTimeZoneValid(record)
             && isArrDelayValid(record) && isArrDelayMinsValid(record);
     }
-    
+
     /*
         29 - CRS_DEP_TIME
         40 - CRS_ARR_TIME
@@ -249,6 +254,29 @@ public class CommonUtil {
                 return true;
             } catch(NumberFormatException e){
                 return false;
+        }
+    }
+
+
+    public static void fileWrite(List<String> list, String fileName){
+        FileWriter writer = null;
+        try{
+            writer = new FileWriter(fileName);
+            for (String s : list){
+                writer.append(s);
+                writer.append(COMMA_SEPARATOR);
+            }
+        }
+        catch (IOException e){
+            System.out.println(e.toString());
+        }
+        finally {
+            try{
+                writer.flush();
+                writer.close();
+            }catch (IOException e){
+                System.out.println(e.toString());
+            }
         }
     }
 }
