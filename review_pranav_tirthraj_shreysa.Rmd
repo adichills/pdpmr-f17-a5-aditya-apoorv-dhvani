@@ -1,6 +1,6 @@
 ---
-title: "A5_review_pranav_tirthraj_shreyasa"
-author: "pranav-shreyasa-tirthraj"
+title: "A5_review_pranav_tirthraj_shreysa"
+author: "pranav-shreysa-tirthraj"
 date: "October 24, 2017"
 output: html_document
 ---
@@ -8,6 +8,13 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+https://github.ccs.neu.edu/pdpmr-f17/a5-aditya-apoorv-dhvani.git
+
+## Following steps were taken to run the program
+1) Changed the hadoop path, placed the input directory and query file in the folder and entered the path in the makefile.
+2) issued make build and make run and the program runs fine.
+
 
 ## Code setup and Execution
 1) Code is not split into parts making it hard to read.
