@@ -1,0 +1,27 @@
+---
+title: "A5_review_pranav_tirthraj_shreyasa"
+author: "pranav-shreyasa-tirthraj"
+date: "October 24, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Code setup and Execution
+1) Code is not split into parts making it hard to read.
+2)Redundant code is present with multiple functions making the same calls and doing the same things
+3) It is difficult to understand the code and how it functions because the code is not split and does multiple things at a time.
+4) The readme file is not clear enough to give details on how to execute the program.
+5) I could not get the code to run,even after following the steps outlined in the readme file.
+
+## Report
+1) Report explains things clearly.
+2) The prediction accuracy mentioned helps in giving a overview of the model and its use.
+3) The runtime information seems to show that the program execution times decreased as the nodes were increased,indicating a good approach.
+4) The graphical representation makes it easy to understand which cases were predicted correctly vs which were predicted incorrectly but does not give any information about which flight,how etc. The graphical representation could have been for other parameters instead of the ones shown.
+5) Overall,the report is clean and does not contain many errors.
+
+
+
