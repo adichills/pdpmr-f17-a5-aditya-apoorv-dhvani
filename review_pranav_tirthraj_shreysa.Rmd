@@ -51,8 +51,8 @@ knitr::opts_chunk$set(echo = TRUE)
 3) It is difficult to understand the code and how it functions because the code is not split and does multiple things at a time.
 4) The readme file is not clear enough to give details on how to execute the program.
 5) Records/Column names are fetched based on the column numbers,which is a bad technique in general.
-6) HopReducer/Hopmapper code is extremely hard to understand because of no comments and no comments for what each methods do.
-6) I could not get the code to run,even after following the steps outlined in the readme file.
+6) HopReducer/Hopmapper code is extremely hard to understand because of not splitting code into methods and no comments for what some defined methods do.
+7) I could not get the code to run,even after following the steps outlined in the readme file.
 
 ## Report
 1) Report explains things clearly.
